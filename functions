@@ -72,6 +72,7 @@ tailscale_attach() {
   ( ! tailscale_is_enabled ) && return
 
   local authkey="$(config_get --global TS_AUTHKEY)"
+  local extraArgs="$(config_get --global TS_EXTRA_ARGS)"
   [[ -z "$authkey" ]] && dokku_log_fail "Set the TS_AUTHKEY with dokku config:set --global"
 
   local storage_directory="${DOKKU_LIB_ROOT}/data/tailscale/${APP}"
@@ -82,7 +83,7 @@ tailscale_attach() {
     $DOKKU_GLOBAL_RUN_ARGS \
     --name "ts-${APP}" \
     --env TS_AUTHKEY="${authkey}" \
-    --env TS_EXTRA_ARGS="--advertise-tags=tag:dokku" \
+    --env TS_EXTRA_ARGS="${extraArgs}" \
     --env TS_STATE_DIR=/var/lib/tailscale \
     --volume "${storage_directory}":/var/lib/tailscale \
     --volume /dev/net/tun:/dev/net/tun \
